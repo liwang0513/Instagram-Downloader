@@ -11,6 +11,32 @@ define('clientSecret', '9b4b51da80004ac1b74d5e3acaa6e2e6');
 define('redirectURI', 'http://localhost/Instagram-Downloader/index.php');
 define('imageDirectory', 'pics/');
 
+//Connect with Instagram
+function connectToInstagram($url) {
+	$ch = curl_init();
+	
+	curl_setopt_array($ch, array(
+		CURLOPT_URL => $url,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_SSL_VERIFYPEER => false,
+		CURLOPT_SSL_VERIFYHOST => 2
+	));
+	
+	$result = curl_exec($ch);
+	curl_close($ch);
+	
+	return $result;
+}
+
+//Get User ID
+function getUserID($userName) {
+	$url = 'https://api.instagram.com/v1/users/search?q='.$userName.'&client_id='.clientID;
+	$instagramInfo = connectToInstagram($url);
+	$results = json_decode($instagramInfo, true);
+	
+	return $results['data'][0]['id'];
+}
+
 if (isset($_GET['code'])) {
 	$code = $_GET['code'];
 	$url = "https://api.instagram.com/oauth/access_token";
@@ -31,7 +57,9 @@ if (isset($_GET['code'])) {
 	curl_close($curl);
 	
 	$results = json_decode($result, true);
-	echo $userName = $results['user']['username'];
+	$userName = $results['user']['username'];
+	
+	echo getUserID($userName);
 } else { ?>
 	
 	<!doctype html>
