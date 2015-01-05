@@ -46,8 +46,16 @@ function printImages($userID) {
 	//Parse through results
 	foreach($results['data'] as $items) {
 		$image_url = $items['images']['low_resolution']['url'];
-		echo '<img src=" '.$image_url.'"/><br />';
+		savePicture($image_url);
 	}
+}
+
+//Save the picture
+function savePicture($image_url) {
+	$filename = basename($image_url);
+	//make sure that image doesn't exist in database
+	$destination = imageDirectory.$filename;
+	file_put_contents($destination, file_get_contents($image_url));
 }
 
 if (isset($_GET['code'])) {
