@@ -37,6 +37,19 @@ function getUserID($userName) {
 	return $results['data'][0]['id'];
 }
 
+//Print out images on the screen
+function printImages($userID) {
+	$url = 'https://api.instagram.com/v1/users/'.$userID.'/media/recent?client_id='.clientID.'&count=5';
+	$instagramInfo = connectToInstagram($url);
+	$results = json_decode($instagramInfo, true);
+	
+	//Parse through results
+	foreach($results['data'] as $items) {
+		$image_url = $items['images']['low_resolution']['url'];
+		echo '<img src=" '.$image_url.'"/><br />';
+	}
+}
+
 if (isset($_GET['code'])) {
 	$code = $_GET['code'];
 	$url = "https://api.instagram.com/oauth/access_token";
@@ -59,7 +72,8 @@ if (isset($_GET['code'])) {
 	$results = json_decode($result, true);
 	$userName = $results['user']['username'];
 	
-	echo getUserID($userName);
+	$userID = getUserID($userName);
+	printImages($userID);
 } else { ?>
 	
 	<!doctype html>
